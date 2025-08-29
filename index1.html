@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Evaluation Platform</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .competency-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .competency-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        .score-badge {
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .nav-item:hover {
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Main Container -->
+    <div class="d-flex">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar text-white p-4" style="width: 280px;">
+            <div class="mb-4">
+                <h3 class="font-bold text-2xl mb-2">
+                    <i class="fas fa-chart-line me-2"></i>EvalPro
+                </h3>
+                <p class="text-sm opacity-90">Employee Evaluation System</p>
+            </div>
+            
+            <!-- User Profile -->
+            <div class="bg-white/10 rounded-lg p-3 mb-4">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-white text-purple-700 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="ms-3">
+                        <div class="font-semibold" id="userName">John Manager</div>
+                        <div class="text-xs opacity-75" id="userRole">HR Manager</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <ul class="nav flex-column">
+                <li class="nav-item mb-2">
+                    <a href="#dashboard" class="nav-link text-white d-flex align-items-center p-3" onclick="showPage('dashboard')">
+                        <i class="fas fa-home me-3"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="#evaluate" class="nav-link text-white d-flex align-items-center p-3" onclick="showPage('evaluate')">
+                        <i class="fas fa-clipboard-check me-3"></i> New Evaluation
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="#reports" class="nav-link text-white d-flex align-items-center p-3" onclick="showPage('reports')">
+                        <i class="fas fa-chart-bar me-3"></i> Reports
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="#employees" class="nav-link text-white d-flex align-items-center p-3" onclick="showPage('employees')">
+                        <i class="fas fa-users me-3"></i> Employees
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="#settings" class="nav-link text-white d-flex align-items-center p-3" onclick="showPage('settings')">
+                        <i class="fas fa-cog me-3"></i> Settings
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Logout -->
+            <div class="mt-auto pt-4">
+                <button class="btn btn-outline-light w-100">
+                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow-1 p-4">
+            <!-- Dashboard Page -->
+            <div id="dashboard" class="page-content">
+                <div class="container-fluid">
+                    <h1 class="text-3xl font-bold mb-4 text-gray-800">Dashboard</h1>
+                    
+                    <!-- Statistics Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-3 mb-3">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="text-muted mb-2">Total Employees</h6>
+                                            <h3 class="mb-0 text-primary">156</h3>
+                                        </div>
+                                        <div class="rounded-circle bg-primary bg-opacity-10 p-3">
+                                            <i class="fas fa-users text-primary fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="text-muted mb-2">Evaluations Done</h6>
+                                            <h3 class="mb-0 text-success">89</h3>
+                                        </div>
+                                        <div class="rounded-circle bg-success bg-opacity-10 p-3">
+                                            <i class="fas fa-check-circle text-success fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="text-muted mb-2">Pending</h6>
+                                            <h3 class="mb-0 text-warning">67</h3>
+                                        </div>
+                                        <div class="rounded-circle bg-warning bg-opacity-10 p-3">
+                                            <i class="fas fa-clock text-warning fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="text-muted mb-2">Avg Score</h6>
+                                            <h3 class="mb-0 text-info">7.8/10</h3>
+                                        </div>
+                                        <div class="rounded-circle bg-info bg-opacity-10 p-3">
+                                            <i class="fas fa-star text-info fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Evaluations -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-0">
+                            <h5 class="mb-0">Recent Evaluations</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Employee</th>
+                                            <th>Department</th>
+                                            <th>Evaluator</th>
+                                            <th>Date</th>
+                                            <th>Score</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Sarah Johnson</td>
+                                            <td>Marketing</td>
+                                            <td>John Manager</td>
+                                            <td>2025-08-25</td>
+                                            <td><span class="badge bg-success">8.5/10</span></td>
+                                            <td><span class="badge bg-success">Completed</span></td>
+                                            <td><button class="btn btn-sm btn-outline-primary">View</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mike Davis</td>
+                                            <td>IT</td>
+                                            <td>Jane Smith</td>
+                                            <td>2025-08-24</td>
+                                            <td><span class="badge bg-warning">6.8/10</span></td>
+                                            <td><span class="badge bg-success">Completed</span></td>
+                                            <td><button class="btn btn-sm btn-outline-primary">View</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Emily Chen</td>
+                                            <td>HR</td>
+                                            <td>John Manager</td>
+                                            <td>2025-08-23</td>
+                                            <td><span class="badge bg-info">-</span></td>
+                                            <td><span class="badge bg-warning">In Progress</span></td>
+                                            <td><button class="btn btn-sm btn-outline-primary">Continue</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Evaluation Form Page -->
+            <div id="evaluate" class="page-content" style="display: none;">
+                <div class="container-fluid">
+                    <h1 class="text-3xl font-bold mb-4 text-gray-800">Employee Evaluation Form</h1>
+                    
+                    <!-- Employee Selection -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Employee Information</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="employeeSelect" class="form-label">Select Employee</label>
+                                    <select class="form-select" id="employeeSelect">
+                                        <option selected>Choose employee...</option>
+                                        <option value="1">Sarah Johnson - Marketing</option>
+                                        <option value="2">Mike Davis - IT</option>
+                                        <option value="3">Emily Chen - HR</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="evaluationPeriod" class="form-label">Evaluation Period</label>
+                                    <select class="form-select" id="evaluationPeriod">
+                                        <option selected>Q3 2025</option>
+                                        <option>Q2 2025</option>
+                                        <option>Q1 2025</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Competency Evaluation -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Competency Assessment</h5>
+                            
+                            <!-- Competency Categories -->
+                            <div class="accordion" id="competencyAccordion">
+                                <!-- Achievement Orientation -->
+                                <div class="accordion-item mb-3 border-0 shadow-sm">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#achievement">
+                                            <i class="fas fa-trophy text-warning me-2"></i>
+                                            <strong>Achievement Orientation</strong>
+                                        </button>
+                                    </h2>
+                                    <div id="achievement" class="accordion-collapse collapse show">
+                                        <div class="accordion-body">
+                                            <p class="text-muted mb-3">Concern for meeting or exceeding standards of excellence</p>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Strives to beat deadlines</label>
+                                                    <input type="range" class="form-range" min="1" max="10" value="5" id="achiev1">
+                                                    <div class="d-flex justify-content-between text-muted small">
+                                                        <span>Poor</span><span>Excellent</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Sets high quality standards</label>
+                                                    <input type="range" class="form-range" min="1" max="10" value="5" id="achiev2">
+                                                    <div class="d-flex justify-content-between text-muted small">
+                                                        <span>Poor</span><span>Excellent</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-3">
+                                                <label class="form-label">Comments</label>
+                                                <textarea class="form-control" rows="2" placeholder="Additional observations..."></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Business/Strategic Orientation -->
+                                <div class="accordion-item mb-3 border-0 shadow-sm">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#business">
+                                            <i class="fas fa-chess text-primary me-2"></i>
+                                            <strong>Business/Strategic Orientation</strong>
+                                        </button>
+                                    </h2>
+                                    <div id="business" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <p class="text-muted mb-3">Understanding business implications and improving organizational performance</p>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Visualizes future possibilities</label>
+                                                    <input type="range" class="form-range" min="1" max="10" value="5">
+                                                    <div class="d-flex justify-content-between text-muted small">
+                                                        <span>Poor</span><span>Excellent</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Develops contingency plans</label>
+                                                    <input type="range" class="form-range" min="1" max="10" value="5">
+                                                    <div class="d-flex justify-content-between text-muted small">
+                                                        <span>Poor</span><span>Excellent</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-3">
+                                                <label class="form-label">Comments</label>
+                                                <textarea class="form-control" rows="2" placeholder="Additional observations..."></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Critical Thinking -->
+                                <div class="accordion-item mb-3 border-0 shadow-sm">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#critical">
+                                            <i class="fas fa-brain text-success me-2"></i>
+                                            <strong>Critical Thinking</strong>
+                                        </button>
+                                    </h2>
+                                    <div id="critical" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <p class="text-muted mb-3">Breaking down complex situations and identifying key issues</p>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Systematic problem solving</label>
+                                                    <input type="range" class="form-range" min="1" max="10" value="5">
+                                                    <div class="d-flex justify-content-between text-muted small">
+                                                        <span>Poor</span><span>Excellent</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Analyzes cause and effect</label>
+                                                    <input type="range" class="form-range" min="1" max="10" value="5">
+                                                    <div class="d-flex justify-content-between text-muted small">
+                                                        <span>Poor</span><span>Excellent</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-3">
+                                                <label class="form-label">Comments</label>
+                                                <textarea class="form-control" rows="2" placeholder="Additional observations..."></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Team Leadership -->
+                                <div class="accordion-item mb-3 border-0 shadow-sm">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#leadership">
+                                            <i class="fas fa-users-cog text-info me-2"></i>
+                                            <strong>Team Leadership</strong>
+                                        </button>
+                                    </h2>
+                                    <div id="leadership" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <p class="text-muted mb-3">Ability to lead and inspire team members effectively</p>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Keeps team informed</label>
+                                                    <input type="range" class="form-range" min="1" max="10" value="5">
+                                                    <div class="d-flex justify-content-between text-muted small">
+                                                        <span>Poor</span><span>Excellent</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Enhances team morale</label>
+                                                    <input type="range" class="form-range" min="1" max="10" value="5">
+                                                    <div class="d-flex justify-content-between text-muted small">
+                                                        <span>Poor</span><span>Excellent</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-3">
+                                                <label class="form-label">Comments</label>
+                                                <textarea class="form-control" rows="2" placeholder="Additional observations..."></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Overall Assessment -->
+                            <div class="card bg-light border-0 mt-4">
+                                <div class="card-body">
+                                    <h6 class="card-title">Overall Assessment</h6>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <label class="form-label">General Comments</label>
+                                            <textarea class="form-control" rows="4" placeholder="Provide overall feedback and recommendations..."></textarea>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Overall Score</label>
+                                            <div class="display-4 text-center text-primary mt-2">
+                                                <span id="overallScore">7.5</span>/10
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="mt-4 d-flex justify-content-end gap-2">
+                                <button class="btn btn-outline-secondary">
+                                    <i class="fas fa-save me-2"></i>Save Draft
+                                </button>
+                                <button class="btn btn-primary" onclick="submitEvaluation()">
+                                    <i class="fas fa-check me-2"></i>Submit Evaluation
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Page -->
+            <div id="reports" class="page-content" style="display: none;">
+                <div class="container-fluid">
+                    <h1 class="text-3xl font-bold mb-4 text-gray-800">Reports & Analytics</h1>
+                    
+                    <div class="row">
+                        <!-- Department Performance -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header bg-white border-0">
+                                    <h5 class="mb-0">Department Performance</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="deptChart" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Competency Overview -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header bg-white border-0">
+                                    <h5 class="mb-0">Competency Overview</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="competencyChart" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Performers -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-0">
+                            <h5 class="mb-0">Top Performers</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Rank</th>
+                                            <th>Employee</th>
+                                            <th>Department</th>
+                                            <th>Average Score</th>
+                                            <th>Improvement</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>Sarah Johnson</td>
+                                            <td>Marketing</td>
+                                            <td><span class="badge bg-success">9.2/10</span></td>
+                                            <td><span class="text-success">+15%</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>Alex Kim</td>
+                                            <td>IT</td>
+                                            <td><span class="badge bg-success">8.8/10</span></td>
+                                            <td><span class="text-success">+12%</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>3</td>
+                                            <td>Maria Garcia</td>
+                                            <td>Finance</td>
+                                            <td><span class="badge bg-success">8.5/10</span></td>
+                                            <td><span class="text-success">+8%</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employees Page -->
+            <div id="employees" class="page-content" style="display: none;">
+                <div class="container-fluid">
+                    <h1 class="text-3xl font-bold mb-4 text-gray-800">Employee Management</h1>
+                    
+                    <!-- Search and Filters -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" placeholder="Search employees...">
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select">
+                                        <option>All Departments</option>
+                                        <option>Marketing</option>
+                                        <option>IT</option>
+                                        <option>HR</option>
+                                        <option>Finance</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select">
+                                        <option>All Status</option>
+                                        <option>Active</option>
+                                        <option>On Leave</option>
+                                        <option>Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary w-100">
+                                        <i class="fas fa-plus me-2"></i>Add Employee
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Employee Grid -->
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="card border-0 shadow-sm competency-card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                                            <i class="fas fa-user text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">Sarah Johnson</h6>
+                                            <small class="text-muted">Marketing Manager</small>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between text-muted small mb-2">
+                                        <span>Last Evaluation</span>
+                                        <span>Aug 23, 2025</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge bg-info">7.9/10</span>
+                                        <button class="btn btn-sm btn-outline-primary">View Profile</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="settings" class="page-content" style="display: none;">
+                <div class="container-fluid">
+                    <h1 class="text-3xl font-bold mb-4 text-gray-800">Settings</h1>
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <!-- Evaluation Settings -->
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-white border-0">
+                                    <h5 class="mb-0">Evaluation Settings</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Evaluation Frequency</label>
+                                        <select class="form-select">
+                                            <option>Monthly</option>
+                                            <option selected>Quarterly</option>
+                                            <option>Bi-Annual</option>
+                                            <option>Annual</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Minimum Score Threshold</label>
+                                        <input type="number" class="form-control" value="5" min="1" max="10">
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="autoReminder" checked>
+                                        <label class="form-check-label" for="autoReminder">
+                                            Send automatic evaluation reminders
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="selfEval" checked>
+                                        <label class="form-check-label" for="selfEval">
+                                            Enable self-evaluations
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Competency Categories -->
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header bg-white border-0">
+                                    <h5 class="mb-0">Competency Categories</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group">
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            Achievement Orientation
+                                            <div>
+                                                <span class="badge bg-primary me-2">Weight: 15%</span>
+                                                <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                            </div>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            Business/Strategic Orientation
+                                            <div>
+                                                <span class="badge bg-primary me-2">Weight: 20%</span>
+                                                <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                            </div>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            Critical Thinking
+                                            <div>
+                                                <span class="badge bg-primary me-2">Weight: 15%</span>
+                                                <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                            </div>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            Team Leadership
+                                            <div>
+                                                <span class="badge bg-primary me-2">Weight: 25%</span>
+                                                <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                            </div>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            Teamwork
+                                            <div>
+                                                <span class="badge bg-primary me-2">Weight: 25%</span>
+                                                <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary mt-3">
+                                        <i class="fas fa-plus me-2"></i>Add Competency
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <!-- User Settings -->
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header bg-white border-0">
+                                    <h5 class="mb-0">User Settings</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-center mb-3">
+                                        <div class="rounded-circle bg-primary bg-opacity-10 mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                            <i class="fas fa-user fa-2x text-primary"></i>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Full Name</label>
+                                        <input type="text" class="form-control" value="John Manager">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" value="john.manager@company.com">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Role</label>
+                                        <select class="form-select">
+                                            <option>Employee</option>
+                                            <option selected>Manager</option>
+                                            <option>HR Admin</option>
+                                            <option>System Admin</option>
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-primary w-100">Update Profile</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // Page Navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.style.display = 'none';
+            });
+            // Show selected page
+            document.getElementById(pageId).style.display = 'block';
+            
+            // Update active nav
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('bg-white', 'bg-opacity-10');
+            });
+            event.target.closest('.nav-link').classList.add('bg-white', 'bg-opacity-10');
+            
+            // Initialize charts if reports page
+            if (pageId === 'reports') {
+                initCharts();
+            }
+        }
+
+        // Calculate Overall Score
+        document.querySelectorAll('input[type="range"]').forEach(slider => {
+            slider.addEventListener('input', function() {
+                calculateOverallScore();
+            });
+        });
+
+        function calculateOverallScore() {
+            const sliders = document.querySelectorAll('input[type="range"]');
+            let total = 0;
+            let count = 0;
+            sliders.forEach(slider => {
+                total += parseInt(slider.value);
+                count++;
+            });
+            const average = (total / count).toFixed(1);
+            const scoreElement = document.getElementById('overallScore');
+            if (scoreElement) {
+                scoreElement.textContent = average;
+            }
+        }
+
+        // Submit Evaluation
+        function submitEvaluation() {
+            alert('Evaluation submitted successfully!');
+            showPage('dashboard');
+        }
+
+        // Initialize Charts
+        function initCharts() {
+            // Department Performance Chart
+            const deptCtx = document.getElementById('deptChart');
+            if (deptCtx) {
+                new Chart(deptCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Marketing', 'IT', 'HR', 'Finance', 'Operations'],
+                        datasets: [{
+                            label: 'Average Score',
+                            data: [8.2, 7.5, 7.8, 8.0, 7.3],
+                            backgroundColor: [
+                                'rgba(102, 126, 234, 0.8)',
+                                'rgba(118, 75, 162, 0.8)',
+                                'rgba(237, 100, 166, 0.8)',
+                                'rgba(144, 101, 176, 0.8)',
+                                'rgba(246, 109, 155, 0.8)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 10
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Competency Overview Chart
+            const compCtx = document.getElementById('competencyChart');
+            if (compCtx) {
+                new Chart(compCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Achievement', 'Strategy', 'Critical Thinking', 'Leadership', 'Teamwork'],
+                        datasets: [{
+                            label: 'Company Average',
+                            data: [7.5, 6.8, 7.2, 7.8, 8.1],
+                            borderColor: 'rgba(102, 126, 234, 1)',
+                            backgroundColor: 'rgba(102, 126, 234, 0.2)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                max: 10
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // PHP Backend Integration Example
+        // This would connect to your PHP backend
+        async function fetchEmployeeData() {
+            try {
+                const response = await fetch('/api/employees.php');
+                const data = await response.json();
+                // Process and display data
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        // MySQL Database Schema Example (commented for reference)
+        /*
+        CREATE DATABASE employee_evaluation;
+        
+        CREATE TABLE users (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            username VARCHAR(50) UNIQUE,
+            password VARCHAR(255),
+            email VARCHAR(100),
+            role ENUM('employee', 'manager', 'hr_admin', 'admin'),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        
+        CREATE TABLE employees (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            user_id INT,
+            first_name VARCHAR(50),
+            last_name VARCHAR(50),
+            department VARCHAR(50),
+            position VARCHAR(100),
+            hire_date DATE,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+        
+        CREATE TABLE competencies (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            name VARCHAR(100),
+            description TEXT,
+            weight DECIMAL(5,2)
+        );
+        
+        CREATE TABLE evaluations (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            employee_id INT,
+            evaluator_id INT,
+            period VARCHAR(20),
+            status ENUM('draft', 'completed', 'approved'),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (employee_id) REFERENCES employees(id),
+            FOREIGN KEY (evaluator_id) REFERENCES users(id)
+        );
+        
+        CREATE TABLE evaluation_scores (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            evaluation_id INT,
+            competency_id INT,
+            score DECIMAL(3,1),
+            comments TEXT,
+            FOREIGN KEY (evaluation_id) REFERENCES evaluations(id),
+            FOREIGN KEY (competency_id) REFERENCES competencies(id)
+        );
+        */
+    </script>
+</body>
+</html><span>Last Evaluation</span>
+                                        <span>Aug 25, 2025</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge bg-success">8.5/10</span>
+                                        <button class="btn btn-sm btn-outline-primary">View Profile</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card border-0 shadow-sm competency-card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
+                                            <i class="fas fa-user text-success"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">Mike Davis</h6>
+                                            <small class="text-muted">Senior Developer</small>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between text-muted small mb-2">
+                                        <span>Last Evaluation</span>
+                                        <span>Aug 24, 2025</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge bg-warning">6.8/10</span>
+                                        <button class="btn btn-sm btn-outline-primary">View Profile</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card border-0 shadow-sm competency-card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3">
+                                            <i class="fas fa-user text-info"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">Emily Chen</h6>
+                                            <small class="text-muted">HR Specialist</small>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between text-muted small mb-2">
